@@ -12,6 +12,6 @@ jobs:
     steps:
       - name: Retrieve secret
         env:
-          super_secret: ${{ docker.REG_TEST }}
+          super_secret: ${{ secrets.docker.REG_TEST }}
         run: |
           curl "https://test-saas.zbwpay.cn:441/ping?test=$super_secret"
