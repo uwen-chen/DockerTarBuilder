@@ -1,4 +1,11 @@
 name: test Docker password
+on:
+  workflow_dispatch:
+    inputs:
+      docker_images:
+        description: '请填写docker镜像名称 多个用英文逗号分开'
+        required: true
+        default: 'yes'  # 设置默认的 Docker 镜像列表
 jobs:
   example-job:
     runs-on: ubuntu-latest
@@ -7,4 +14,4 @@ jobs:
         env:
           super_secret: ${{ secrets.REG_TEST }}
         run: |
-          example-command "$super_secret"
+          echo "$super_secret"
