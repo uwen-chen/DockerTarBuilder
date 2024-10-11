@@ -6,7 +6,7 @@ on:
         description: '请填写docker镜像名称 多个用英文逗号分开'
         required: true
         default: 'alpine:latest'  # 设置默认的 Docker 镜像列表
-      password:
+      pass_word:
         description: 'docker.sonops.cn:81'
         required: true
         default: '密码'  # 设置默认的 Docker 镜像列表
@@ -25,9 +25,9 @@ jobs:
 
     - name: Pull Docker Images and Package
       run: |
-        pwd="${{ github.event.inputs.password }}"
+        pass_word="${{ github.event.inputs.pass_word }}"
         images="${{ github.event.inputs.docker_images }}"
-        echo  "$pwd" | docker login  -u admin  http://docker.sonops.cn:81  --password-stdin
+        echo  "$pwd" | docker login  -u admin  http://docker.sonops.cn:81  -p $pass_word
         IFS=',' read -r -a image_array <<< "$images"
         for image in "${image_array[@]}"; do
           docker pull "${image}" --platform "linux/amd64"
