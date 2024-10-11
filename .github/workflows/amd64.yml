@@ -1,11 +1,13 @@
-name: x86-64 Pull and Save Docker Image
+name: AMD64 Push Image 
+
 on:
   workflow_dispatch:
     inputs:
       docker_images:
         description: '请填写docker镜像名称 多个用英文逗号分开'
         required: true
-        default: 'alpine:latest'  # 设置默认的 Docker 镜像列表
+        default: 'alpine:latest,ubuntu:latest'  # 设置默认的 Docker 镜像列表
+
 jobs:
   pull_and_package:
     runs-on: ubuntu-latest
@@ -14,17 +16,17 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Clean up Docker to free space
+    - name: login registry
       run: |
-          docker system prune -a -f
-          docker volume prune -f
+        docker login -u admin -p ${{ secrets.REG_SECRET }}  docker.sonops.cn:441
 
     - name: Pull Docker Images and Package
       run: |
         images="${{ github.event.inputs.docker_images }}"
-        docker login  -u admin  http://docker.sonops.cn:81  -p 123123
         IFS=',' read -r -a image_array <<< "$images"
         for image in "${image_array[@]}"; do
           docker pull "${image}" --platform "linux/amd64"
-          docker save "${image}" -o "${image//\//_}-amd64.tar"
+          docker save "${image}" --platform "linux/amd64" -o "${image//\//-}-amd64.tar"
+          docker tag "${image}" "docker.sonops.cn:441/${image}"  
+          docker push "docker.sonops.cn:441/${image}" 
         done
