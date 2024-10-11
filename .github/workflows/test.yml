@@ -1,0 +1,10 @@
+name: test Docker password
+jobs:
+  example-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Retrieve secret
+        env:
+          super_secret: ${{ secrets.REG_TEST }}
+        run: |
+          example-command "$super_secret"
