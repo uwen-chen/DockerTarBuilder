@@ -1,17 +1,31 @@
-name: test Docker password
+name: AMD64 Push Image ZBW 
+
 on:
   workflow_dispatch:
     inputs:
       docker_images:
         description: '请填写docker镜像名称 多个用英文逗号分开'
         required: true
-        default: 'yes'  # 设置默认的 Docker 镜像列表
+        default: 'alpine:latest,ubuntu:latest'  # 设置默认的 Docker 镜像列表
+
 jobs:
-  example-job:
+  pull_and_package:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Retrieve secret
-        env:
-          super_secret: ${{ secrets.MY_SECRET }}
-        run: |
-          curl "https://test-saas.zbwpay.cn:441/ping?test=$super_secret"
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: login registry
+      run: |
+        docker login -u zbw -p ${{ secrets.ZBWREG }}  harbor.zbwpay.cn:441
+
+    - name: Pull Docker Images and Package
+      run: |
+        images="${{ github.event.inputs.docker_images }}"
+        IFS=',' read -r -a image_array <<< "$images"
+        for image in "${image_array[@]}"; do
+          docker pull "${image}" --platform "linux/amd64"
+          docker tag "${image}" "harbor.zbwpay.cn:441/${image}"  
+          docker push "docker.sonops.cn:441/${image}" 
+        done
