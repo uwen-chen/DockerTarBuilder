@@ -27,5 +27,5 @@ jobs:
         for image in "${image_array[@]}"; do
           docker pull "${image}" --platform "linux/amd64"
           docker tag "${image}" "harbor.zbwpay.cn:441/${image}"  
-          docker push "docker.sonops.cn:441/${image}" 
+          docker push "harbor.zbwpay.cn:441/${image}" 
         done
