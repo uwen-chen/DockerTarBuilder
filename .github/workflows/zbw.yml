@@ -18,7 +18,7 @@ jobs:
 
     - name: login registry
       run: |
-        docker login -u zbw -p ${{ secrets.ZBWREG }}  harbor.zbwpay.cn:441
+        docker login -u zbwpay -p ${{ secrets.ZBWREG }}  harbor.zbwpay.cn:441
 
     - name: Pull Docker Images and Package
       run: |
@@ -26,6 +26,6 @@ jobs:
         IFS=',' read -r -a image_array <<< "$images"
         for image in "${image_array[@]}"; do
           docker pull "${image}" --platform "linux/amd64"
-          docker tag "${image}" "harbor.zbwpay.cn:441/${image}"  
-          docker push "harbor.zbwpay.cn:441/${image}" 
+          docker tag "${image}" "harbor.zbwpay.cn:441/library/${image}"  
+          docker push "harbor.zbwpay.cn:441/library/${image}" 
         done
